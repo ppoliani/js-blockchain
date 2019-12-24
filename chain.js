@@ -1,6 +1,7 @@
 const{getGenesisBlock} = require('./genesis');
 const {validateChain} = require('./validator');
 const {calculateHash} = require('./crypto');
+const {broadcast} = require('./net');
 
 const blockchain = [getGenesisBlock()];
 
@@ -40,7 +41,9 @@ const getLatestBlock = () => blockchain[blockchain.length - 1];
 
 const getBlockchain = () => blockchain;
 
+
 module.exports = {
   getLatestBlock,
-  getBlockchain
+  getBlockchain,
+  addBlock
 }

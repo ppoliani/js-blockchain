@@ -7,7 +7,7 @@ const MessageTypes = {
 
 }
 
-const getLatestBlockNumberMsg = () => ({type: MessageTypes.LATEST_BLOCK_NUMBER});
+const latestBlockNumberMsg = () => ({type: MessageTypes.LATEST_BLOCK_NUMBER});
 const queryAllMsg = () => ({type: MessageTypes.QUERY_ALL});
 
 const chainMsg = () =>({
@@ -19,3 +19,10 @@ const latestBlockMsg = () => ({
   type: MessageTypes.RESPONSE_BLOCKCHAIN,
   data: JSON.stringify([getLatestBlock()])
 });
+
+module.exports = {
+  MessageTypes,
+  latestBlockNumberMsg,
+  chainMsg,
+  latestBlockMsg
+}
