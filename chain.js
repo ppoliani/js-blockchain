@@ -1,17 +1,21 @@
-const {calculateHash} = require('./crypto');
-const {createBlock} = require('./block')
+const{getGenesisBlock} = require('./genesis');
+const {validateChain} = require('./validator');
 
-const generateNextBlock = blockData => {
-  const prevBlock = getLatestBlock();
-  const nextIndex = prevBlock.index + 1;
-  const ts = new Date().getTime() / 1000;
-  const nextHash = calculateHash(nextIndex, prevBlock.hash, ts, blockData);
+const blockchain = [getGenesisBlock()];
 
-  return createBlock(
-    nextIndex, 
-    prevBlock.hash, 
-    ts, 
-    blockData, 
-    nextHash
-  );
+const addBlock = block => {
+  if(validateBlock(block, getLatestBlock())) {
+    blockchain.push(block);
+  }
 }
+
+const replaceChain = newBlocks => {
+  if(validateChain(newBlocks) && newBlocks.length > blockchain.length) {
+    console.info('Replacing blockchain');
+    blockchain = newBlocks;
+    broadcast(responseLatestMsg());
+  }
+  else {
+    console.error('Cannot replace blockchain');
+  }
+} 
