@@ -1,12 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const WebSocket = require('ws');
-const {latestBlockNumberMsg} = require('./messages');
+const {latestBlockMsg, latestBlockNumberMsg} = require('./messages');
 const {initMessageHandler} = require('./handler');
 const {getBlockchain, generateNextBlock, addBlock} = require('./chain');
 
-const httpPort = process.env.HTTP_PORT || 3001
-const p2pPort = process.env.P2P_PORT || 6001
+const httpPort = process.env.HTTP_PORT || 3003
+const p2pPort = process.env.P2P_PORT || 6003
 const sockets = []
 
 const initHttpServer = () => {
@@ -18,7 +18,7 @@ const initHttpServer = () => {
   app.post('/mineBlock', (req, res) => {
       const newBlock = generateNextBlock(req.body.data);
       addBlock(newBlock);
-      broadcast(responseLatestMsg());
+      broadcast(latestBlockMsg());
       console.log('block added: ' + JSON.stringify(newBlock));
       res.send();
   });
@@ -55,7 +55,7 @@ const initErrorHandler = (ws) => {
 
 const initConnection = ws => {
 	sockets.push(ws);
-	initMessageHandler(ws);
+	initMessageHandler(ws, write, broadcast);
 	initErrorHandler(ws);
 	write(ws, latestBlockNumberMsg());
 }
@@ -66,8 +66,8 @@ const connectToPeers = newPeers => {
 
 		ws.on('open', () => initConnection(ws))
 
-		ws.on('error', () => {
-			console.log('connection failed')
+		ws.on('error', (err) => {
+			console.log('connection failed', err)
 		})
 	})
 }

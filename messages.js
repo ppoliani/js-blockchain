@@ -24,5 +24,6 @@ module.exports = {
   MessageTypes,
   latestBlockNumberMsg,
   chainMsg,
+  queryAllMsg,
   latestBlockMsg
 }

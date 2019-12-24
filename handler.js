@@ -1,12 +1,12 @@
-const {getLatestBlock, addBlock} = require('./chain');
+const {getLatestBlock, addBlock, replaceChain} = require('./chain');
 const {
   MessageTypes,
   latestBlockMsg,
   chainMsg,
-  handleBlockchainResponse
+  queryAllMsg
 } = require('./messages');
 
-const initMessageHandler = ws => {
+const initMessageHandler = (ws, write, broadcast) => {
 	ws.on('message', data => {
 		const message = JSON.parse(data)
 		console.log('Received message' + JSON.stringify(message))
@@ -19,13 +19,13 @@ const initMessageHandler = ws => {
 				write(ws, chainMsg())
 				break
 			case MessageTypes.RESPONSE_BLOCKCHAIN:
-				handleBlockchainResponse(message)
+				handleBlockchainResponse(message, broadcast)
 				break
 		}
 	})
 }
 
-const handleBlockchainResponse = message => {
+const handleBlockchainResponse = (message, broadcast) => {
 	const receivedBlocks = JSON.parse(message.data).sort(
 		(b1, b2) => b1.index - b2.index
 	);
@@ -43,7 +43,7 @@ const handleBlockchainResponse = message => {
 		if (latestBlockHeld.hash === latestBlockReceived.previousHash) {
 			console.log('We can append the received block to our chain')
 			addBlock(latestBlockReceived)
-			broadcast(responseLatestMsg())
+			broadcast(getLatestBlock())
     } 
     else if (receivedBlocks.length === 1) {
 			console.log('We have to query the chain from our peer')
