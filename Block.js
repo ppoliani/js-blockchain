@@ -1,9 +1,9 @@
-class Block {
-  constructor(index, prevHash, ts, data, hash) {
-    this.index = index;
-    this.prevHash = prevHash;
-    this.ts = ts;
-    this.data = data;
-    this.hash = hash;
-  }
-}
+const createBlock = (index, prevHash, ts, data, hash) => ({
+  index,
+  prevHash,
+  ts,
+  data,
+  hash
+})
+
+module.exports = {createBlock}
